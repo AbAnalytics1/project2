@@ -404,4 +404,25 @@ ON stores.region_id = regions.region_id
 GROUP BY stores.store_name,regions.sales_region
 ORDER BY SUM(transactions.quantity) DESC;
 
-SELECT COUNT(*) FROM customers;
+-- Product Brand analysis
+-- How top 5 brands that had the highest quantity ordered
+
+SELECT TOP(5) productBrand.brand_name, SUM(transactions.quantity) AS Total_Quantity
+FROM transactions
+LEFT JOIN products
+ON transactions.product_id = products.product_id
+LEFT JOIN productBrand
+ON products.product_brandID = productBrand.productBrand_id
+GROUP BY productBrand.brand_name
+ORDER BY  SUM(transactions.quantity) DESC;
+
+
+-- TOP 5 Brand name that fecthed the copany the highest sales Revenues generated 
+SELECT TOP(5) productBrand.brand_name, SUM(transactions.quantity * products.product_retail_price) AS Total_Revenue
+FROM transactions
+LEFT JOIN products
+ON transactions.product_id = products.product_id
+LEFT JOIN productBrand
+ON products.product_brandID = productBrand.productBrand_id
+GROUP BY productBrand.brand_name
+ORDER BY SUM(transactions.quantity * products.product_retail_price) DESC;
