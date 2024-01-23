@@ -211,7 +211,8 @@ SET average_income = (
 								CAST(SUBSTRING(yearly_income,CHARINDEX('-', yearly_income)+2,len(yearly_income))AS INT)
 							)/2
 
-						
+-- Alter the column and change the datatype
+
 ALTER TABLE customers
 ALTER COLUMN average_income VARCHAR(20); 
 
@@ -223,11 +224,13 @@ SET average_income =  CASE
     ELSE 'Unknown'
 END;
 
+-- What is the maximum income
 
 SELECT MAX(average_yearly_income) FROM customers
 
-SELECT MIN(average_yearly_income) FROM customers
+-- what is the minimum income
 
+SELECT MIN(average_yearly_income) FROM customers
 
 -- Remove or disable foreign key constraints
 ALTER TABLE transactions DROP CONSTRAINT FK__transacti__custo__5812160E;
@@ -247,7 +250,6 @@ ALTER TABLE products
 ALTER COLUMN product_retail_price DECIMAL (3,2) 
 
 -- Change the precision and scale of the column to address the issue
-
 
 -- Remove or disable foreign key constraints
 ALTER TABLE returns DROP CONSTRAINT FK__returns__product__5BE2A6F2;
@@ -289,7 +291,6 @@ SELECT
 	COUNT(CASE WHEN customer_country='USA' THEN 1 END) AS count_USA
 	
 FROM customers;
-
 
 -- How many of our customers are high, mid and low income earners
 SELECT 
@@ -340,7 +341,6 @@ SELECT customer_id, COUNT(customer_id)
 FROM transactions
 GROUP BY customer_id
 
-
 -- Revenue generated from customers
 
  SELECT CONCAT(customers.first_name, ' ' , customers.last_name) AS full_name, ROUND(SUM(transactions.quantity * products.product_retail_price),2) AS Revenue
@@ -351,8 +351,6 @@ GROUP BY customer_id
  ON transactions.product_id = products.product_id
  GROUP BY CONCAT(customers.first_name, ' ' , customers.last_name)
  ORDER BY ROUND(SUM(transactions.quantity * products.product_retail_price),2) DESC;
-
-
 
  -- Who are the 10 top customers
 
@@ -405,7 +403,7 @@ GROUP BY stores.store_name,regions.sales_region
 ORDER BY SUM(transactions.quantity) DESC;
 
 -- Product Brand analysis
--- How top 5 brands that had the highest quantity ordered
+-- Which top 5 brands that had the highest quantity ordered
 
 SELECT TOP(5) productBrand.brand_name, SUM(transactions.quantity) AS Total_Quantity
 FROM transactions
@@ -426,3 +424,84 @@ LEFT JOIN productBrand
 ON products.product_brandID = productBrand.productBrand_id
 GROUP BY productBrand.brand_name
 ORDER BY SUM(transactions.quantity * products.product_retail_price) DESC;
+
+-- Find the key performance indicators
+
+-- Find the total revenue
+
+ SELECT SUM(transactions.quantity * products.product_retail_price) AS Total_Revenue
+ FROM transactions
+ LEFT JOIN products
+ ON transactions.product_id = products.product_id
+ 
+-- Find the profit
+
+ SELECT SUM((transactions.quantity * products.product_retail_price) - (products.product_cost)) AS Profit
+ FROM transactions
+ LEFT JOIN products
+ ON transactions.product_id = products.product_id
+
+ -- Total Transactions
+
+ SELECT SUM(quantity) AS total_qautity
+ FROM transactions
+
+-- Total number of items returned
+
+SELECT SUM(quantity)
+FROM returns
+
+-- Find the profits over the years
+SELECT 
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1997 THEN transactions.quantity * products.product_retail_price - products.product_cost ELSE 0 END) AS "1997_Profit",
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1998 THEN transactions.quantity * products.product_retail_price - products.product_cost ELSE 0 END) AS "1998_Profit"
+FROM transactions
+LEFT JOIN products 
+ON transactions.product_id = products.product_id
+WHERE YEAR(transactions.calendar) IN (1997, 1998)
+
+-- Find the revenue over the years
+
+SELECT 
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1997 THEN transactions.quantity * products.product_retail_price  ELSE 0 END) AS "1997_Revenue",
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1998 THEN transactions.quantity * products.product_retail_price  ELSE 0 END) AS "1998_Revenue"
+FROM transactions
+LEFT JOIN products 
+ON transactions.product_id = products.product_id
+WHERE YEAR(transactions.calendar) IN (1997, 1998)
+
+-- find the top 10 products whih their revenue and their revenue increase
+
+SELECT TOP (10) products.product_name,
+
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1997 THEN transactions.quantity * products.product_retail_price  ELSE 0 END) AS "1997_Revenue",
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1998 THEN transactions.quantity * products.product_retail_price  ELSE 0 END) AS "1998_Revenue",
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1998 THEN transactions.quantity * products.product_retail_price  ELSE 0 END) -
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1997 THEN transactions.quantity * products.product_retail_price  ELSE 0 END) AS Revenue_Increase
+FROM transactions
+LEFT JOIN products 
+ON transactions.product_id = products.product_id
+WHERE YEAR(transactions.calendar) IN (1997, 1998)
+GROUP BY products.product_name
+ORDER BY SUM(CASE WHEN YEAR(transactions.calendar) = 1997 THEN transactions.quantity * products.product_retail_price  ELSE 0 END) DESC;
+
+-- Find the top 10 products with their revenue over the years and the quantity increase
+
+SELECT TOP (10) products.product_name,
+
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1997 THEN transactions.quantity ELSE 0 END) AS "1997_Quantity",
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1998 THEN transactions.quantity   ELSE 0 END) AS "1998_Quantity",
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1998 THEN transactions.quantity  ELSE 0 END) -
+	SUM(CASE WHEN YEAR(transactions.calendar) = 1997 THEN transactions.quantity  ELSE 0 END) AS Total_quantity_Increase
+FROM transactions
+LEFT JOIN products 
+ON transactions.product_id = products.product_id
+WHERE YEAR(transactions.calendar) IN (1997, 1998)
+GROUP BY products.product_name
+ORDER BY SUM(CASE WHEN YEAR(transactions.calendar) = 1997 THEN transactions.quantity  ELSE 0 END) DESC;
+
+-- Find the profits, revenue and profit margin for the top 10 products sold
+
+-- Find the Year on Year
+
+
