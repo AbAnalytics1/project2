@@ -343,7 +343,7 @@ GROUP BY customer_id
 
 -- Revenue generated from customers
 
- SELECT CONCAT(customers.first_name, ' ' , customers.last_name), ROUND(SUM(transactions.quantity * products.product_retail_price),2) AS Revenue
+ SELECT CONCAT(customers.first_name, ' ' , customers.last_name) AS full_name, ROUND(SUM(transactions.quantity * products.product_retail_price),2) AS Revenue
  FROM transactions
  LEFT JOIN customers
  ON transactions.customer_id = customers.customer_id
@@ -352,9 +352,11 @@ GROUP BY customer_id
  GROUP BY CONCAT(customers.first_name, ' ' , customers.last_name)
  ORDER BY ROUND(SUM(transactions.quantity * products.product_retail_price),2) DESC;
 
+
+
  -- Who are the 10 top customers
 
- SELECT TOP (10) CONCAT(customers.first_name, ' ' , customers.last_name), ROUND(SUM(transactions.quantity * products.product_retail_price),2) AS Revenue
+ SELECT TOP (10) CONCAT(customers.first_name, ' ' , customers.last_name) AS full_name, ROUND(SUM(transactions.quantity * products.product_retail_price),2) AS Revenue
  FROM transactions
  LEFT JOIN customers
  ON transactions.customer_id = customers.customer_id
@@ -401,3 +403,5 @@ LEFT JOIN regions
 ON stores.region_id = regions.region_id
 GROUP BY stores.store_name,regions.sales_region
 ORDER BY SUM(transactions.quantity) DESC;
+
+SELECT COUNT(*) FROM customers;
