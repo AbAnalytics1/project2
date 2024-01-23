@@ -323,23 +323,35 @@ SELECT
 	
 FROM customers;
 
--- What product has the highest cost
+-- Which product had the highest cost
 
 SELECT product_name, product_cost
 FROM products
 WHERE product_cost = ( SELECT MAX(product_cost) FROM products);
 
--- What product has the highest cost
+-- Which product had the lowest cost
 
 SELECT product_name, product_retail_price
 FROM products
-WHERE product_retail_price = ( SELECT MAX(product_retail_price) FROM products);
+WHERE product_retail_price = ( SELECT MIN(product_retail_price) FROM products);
 
 -- How many transactions where made
 
 SELECT customer_id, COUNT(customer_id)
 FROM transactions
 GROUP BY customer_id
+
+-- How many customers hold 
+
+SELECT DISTINCT(member_card) FROM customers
+
+SELECT
+		SUM(CASE WHEN member_card ='Normal'THEN 1 ELSE 0 END) AS count_normal_holder,
+		SUM(CASE WHEN member_card ='Bronze'THEN 1 ELSE 0 END) AS count_bronze_holder,
+		SUM(CASE WHEN member_card ='Golden'THEN 1 ELSE 0 END) AS count_golden_holder,
+		SUM(CASE WHEN member_card ='Silver'THEN 1 ELSE 0 END) AS count_silver_holder
+FROM customers
+
 
 -- Revenue generated from customers
 
@@ -512,10 +524,20 @@ WHERE YEAR(transactions.calendar) = 1997
 GROUP BY products.product_name
 ORDER BY SUM(transactions.quantity * products.product_retail_price - products.product_cost) DESC
 
+-- How many transactions where made used the different member cards
+
+SELECT
+		SUM(CASE WHEN customers.member_card ='Normal'THEN 1 ELSE 0 END) AS count_normal_holder,
+		SUM(CASE WHEN customers.member_card ='Bronze'THEN 1 ELSE 0 END) AS count_bronze_holder,
+		SUM(CASE WHEN customers.member_card ='Golden'THEN 1 ELSE 0 END) AS count_golden_holder,
+		SUM(CASE WHEN customers.member_card ='Silver'THEN 1 ELSE 0 END) AS count_silver_holder
+FROM transactions 
+LEFT JOIN customers
+ON transactions.customer_id = customers.customer_id;
+
 -- EXEC yearly @calendar = 1997;
 -- sp_help
 -- sp_rename()
-
 
 -- Find the Year on Year
 
