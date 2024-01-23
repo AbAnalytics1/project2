@@ -502,6 +502,20 @@ ORDER BY SUM(CASE WHEN YEAR(transactions.calendar) = 1997 THEN transactions.quan
 
 -- Find the profits, revenue and profit margin for the top 10 products sold
 
--- Find the Year on Year
+SELECT TOP (10) products.product_name, SUM(transactions.quantity * products.product_retail_price) AS total_revenue,
+	   SUM(transactions.quantity * products.product_retail_price - products.product_cost) AS profit,
+	   ROUND(SUM((transactions.quantity * products.product_retail_price - products.product_cost)/(transactions.quantity * products.product_retail_price)),2) AS profit_margin
+FROM transactions
+LEFT JOIN products
+ON transactions.product_id = products.product_id
+WHERE YEAR(transactions.calendar) = 1997
+GROUP BY products.product_name
+ORDER BY SUM(transactions.quantity * products.product_retail_price - products.product_cost) DESC
 
+-- EXEC yearly @calendar = 1997;
+-- sp_help
+-- sp_rename()
+
+
+-- Find the Year on Year
 
