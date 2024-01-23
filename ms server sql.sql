@@ -540,4 +540,3 @@ ON transactions.customer_id = customers.customer_id;
 -- sp_rename()
 
 -- Find the Year on Year
-
