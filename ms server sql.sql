@@ -149,7 +149,6 @@ SET homeowner =
         ELSE 'Undefined'
     END;
 
-
 --Check for duplicates
 
 SELECT customer_id, COUNT(customer_id) AS Duplicate
@@ -209,7 +208,7 @@ SET average_income = (
 								CAST(SUBSTRING(yearly_income,1,CHARINDEX('-', yearly_income)-2) AS INT)
 								+
 								CAST(SUBSTRING(yearly_income,CHARINDEX('-', yearly_income)+2,len(yearly_income))AS INT)
-							)/2
+					)/2
 
 -- Alter the column and change the datatype
 
@@ -426,7 +425,6 @@ ON products.product_brandID = productBrand.productBrand_id
 GROUP BY productBrand.brand_name
 ORDER BY  SUM(transactions.quantity) DESC;
 
-
 -- TOP 5 Brand name that fecthed the copany the highest sales Revenues generated 
 SELECT TOP(5) productBrand.brand_name, SUM(transactions.quantity * products.product_retail_price) AS Total_Revenue
 FROM transactions
@@ -438,7 +436,6 @@ GROUP BY productBrand.brand_name
 ORDER BY SUM(transactions.quantity * products.product_retail_price) DESC;
 
 -- Find the key performance indicators
-
 -- Find the total revenue
 
  SELECT SUM(transactions.quantity * products.product_retail_price) AS Total_Revenue
