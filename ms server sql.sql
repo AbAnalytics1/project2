@@ -539,13 +539,51 @@ ON transactions.customer_id = customers.customer_id;
 -- Find the Year on Year
 
 -- Return rate
+SELECT SUM(quantity) AS total_returns FROM returns;
 
-SELECT  SUM(returns.quantity / transactions.quantity * 100) AS returns_rate --	I have an issue with the results
-FROM transactions 
+SELECT SUM(quantity) AS total_transactions FROM transactions;
+
+SELECT (p.product_name),  COALESCE(SUM(r.quantity) / NULLIF(SUM(t.quantity), 0), 0) * 100 AS returns_rate
+FROM transactions t
+LEFT JOIN products p
+ON t.product_id = p.product_id
+LEFT JOIN returns r
+ON p.product_id = r.product_id
+GROUP BY p.product_name
+
+-- Returns Analysis
+
+-- find the total quatity of goods returns
+
+SELECT SUM(quantity) 
+FROM returns
+
+-- what are the top 5 product returned
+
+SELECT TOP (5) products.product_name, SUM(returns.quantity) AS quantity_returned
+FROM returns
 LEFT JOIN products
-ON transactions.product_id = products.product_id
-LEFT JOIN returns 
-ON products.product_id = returns.product_id
+ON returns.product_id = products.product_id
+GROUP BY products.product_name
+ORDER BY SUM(returns.quantity) DESC;
+
+-- what are the top 3 brands which recorded the highest quantity returned
+
+SELECT TOP (5) productBrand.brand_name, SUM(returns.quantity) AS quantity_returned
+FROM returns
+LEFT JOIN products
+ON returns.product_id = products.product_id
+LEFT JOIN productBrand
+ON products.product_brandID = productBrand.productBrand_id
+GROUP BY productBrand.brand_name
+ORDER BY SUM(returns.quantity) DESC;
+
+-- which store recorded the highest number of quatity returned
+-- total quantity returned within the two years.
+
+
+
+
 
 
 
