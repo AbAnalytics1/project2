@@ -336,9 +336,9 @@ WHERE product_retail_price = ( SELECT MIN(product_retail_price) FROM products);
 
 -- How many transactions where made
 
-SELECT customer_id, COUNT(customer_id)
+SELECT COUNT(*) 
 FROM transactions
-GROUP BY customer_id
+
 
 -- How many customers hold 
 
@@ -537,3 +537,17 @@ ON transactions.customer_id = customers.customer_id;
 -- sp_rename()
 
 -- Find the Year on Year
+
+-- Return rate
+
+SELECT  SUM(returns.quantity / transactions.quantity * 100) AS returns_rate --	I have an issue with the results
+FROM transactions 
+LEFT JOIN products
+ON transactions.product_id = products.product_id
+LEFT JOIN returns 
+ON products.product_id = returns.product_id
+
+
+
+
+
