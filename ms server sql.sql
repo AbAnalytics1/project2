@@ -539,6 +539,7 @@ ON transactions.customer_id = customers.customer_id;
 -- Find the Year on Year
 
 -- Return rate
+
 SELECT SUM(quantity) AS total_returns FROM returns;
 
 SELECT SUM(quantity) AS total_transactions FROM transactions;
@@ -579,7 +580,47 @@ GROUP BY productBrand.brand_name
 ORDER BY SUM(returns.quantity) DESC;
 
 -- which store recorded the highest number of quatity returned
+
+SELECT TOP (1)store_name,SUM(returns.quantity) AS quantity_returned
+FROM returns
+LEFT JOIN stores
+ON returns.store_id = stores.store_id
+GROUP BY store_name
+ORDER BY SUM(returns.quantity) DESC;
+
 -- total quantity returned within the two years.
+
+SELECT SUM(quantity) AS quantity_returned
+FROM returns
+WHERE YEAR(calendar) IN (1997,1998);
+
+--what is the total quantity in 1997 and 1998 respectively by product name
+
+SELECT  products.product_name,
+
+		SUM(CASE WHEN YEAR(returns.calendar) = 1997 THEN returns.quantity ELSE 0 END ) AS Total_returns_1997,
+		SUM(CASE WHEN YEAR(returns.calendar) = 1998 THEN returns.quantity ELSE 0 END ) AS Total_returns_1998
+
+FROM returns
+LEFT JOIN products
+ON returns.product_id = products.product_id
+GROUP BY products.product_name
+
+
+-- find the top 10 products and compare the quantity returned. Find the difference in returns between the two years.
+
+SELECT TOP(15) products.product_name,
+
+		SUM(CASE WHEN YEAR(returns.calendar) = 1997 THEN returns.quantity ELSE 0 END ) AS Total_returns_1997,
+		SUM(CASE WHEN YEAR(returns.calendar) = 1998 THEN returns.quantity ELSE 0 END ) AS Total_returns_1998,
+		SUM( (CASE WHEN YEAR(returns.calendar) = 1998 THEN returns.quantity ELSE 0 END )- (CASE WHEN YEAR(returns.calendar) = 1997 THEN returns.quantity ELSE 0 END )) AS returns_difference
+
+FROM returns
+LEFT JOIN products
+ON returns.product_id = products.product_id
+GROUP BY products.product_name
+ORDER BY SUM( (CASE WHEN YEAR(returns.calendar) = 1998 THEN returns.quantity ELSE 0 END )- (CASE WHEN YEAR(returns.calendar) = 1997 THEN returns.quantity ELSE 0 END ))DESC;
+
 
 
 
