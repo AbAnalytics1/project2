@@ -622,6 +622,8 @@ GROUP BY products.product_name
 ORDER BY SUM( (CASE WHEN YEAR(returns.calendar) = 1998 THEN returns.quantity ELSE 0 END )- (CASE WHEN YEAR(returns.calendar) = 1997 THEN returns.quantity ELSE 0 END ))DESC;
 -- the above sql was connected to power bi for visualisation
 
+-- done
+
 
 
 
