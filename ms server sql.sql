@@ -1,5 +1,5 @@
 
--- Create a new database to house all the entities needed for the analysis.
+-- Create a new database to house all the entities needed for the data analysis.
 
 CREATE DATABASE Analytic;
 
