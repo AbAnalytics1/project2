@@ -44,7 +44,7 @@ CREATE TABLE customers(
 
  );
 
---Create the products table
+--Create the products table.
 
 CREATE TABLE products(
 
