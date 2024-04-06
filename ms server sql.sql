@@ -60,7 +60,7 @@ CREATE TABLE products(
 
 );
 
--- Create the regions table
+-- Create the regions table.
 
 CREATE TABLE regions(
 
