@@ -35,7 +35,7 @@ CREATE TABLE customers(
 
 );
 
---Create the product brand table 
+--Create the product brand table.
 
  CREATE TABLE productBrand(
  
