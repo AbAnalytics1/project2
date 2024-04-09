@@ -111,7 +111,7 @@ CREATE TABLE transactions(
 
 );
 
---Create returns table
+--Create the returns table
 
 CREATE TABLE returns (
 
