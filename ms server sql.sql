@@ -70,7 +70,7 @@ CREATE TABLE regions(
 
 );
 
---Create stores table
+--Create the stores table
 
 CREATE TABLE stores(
 
