@@ -90,7 +90,7 @@ CREATE TABLE stores(
 
 );
 
---Create a calendar table
+--Create the calendar table
 
 CREATE TABLE calendar(
 
